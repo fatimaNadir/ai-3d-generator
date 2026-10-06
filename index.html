@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Studio Pro - All-in-One Ultimate Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col items-center p-6">
+
+    <div class="max-w-4xl w-full text-center my-8">
+        <h1 class="text-4xl font-extrabold text-sky-400 mb-2">⚡ AI Studio Pro (Ultimate Edition)</h1>
+        <p class="text-slate-400">Ek hi prompt se 3D Animation Video, Custom AI Images aur Poori Professional Website tayar karein!</p>
+    </div>
+
+    <!-- Main Generator Box -->
+    <div class="max-w-4xl w-full bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-2xl">
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-slate-300 mb-2">Apna Idea ya Website ka Topic likhein (e.g., Luxury Watch E-Commerce & 3D Scroll):</label>
+            <textarea id="userPrompt" rows="3" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 text-white focus:outline-none focus:border-sky-500" placeholder="Yahan apna detailed prompt likhein..."></textarea>
+        </div>
+        
+        <button onclick="generateAll()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-3 px-6 rounded-xl transition duration-200 shadow-lg cursor-pointer">
+            🚀 Sab Kuch Generate Karein (Video + AI Image + Website)
+        </button>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loader" class="hidden mt-8 text-center">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-sky-500 border-t-transparent"></div>
+        <p class="text-slate-400 mt-2">AI 3D Video, Custom Image aur Website Code tayar kar raha hai...</p>
+    </div>
+
+    <!-- Results Section -->
+    <div id="resultSection" class="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 hidden">
+        
+        <!-- Video & Prompt Card -->
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+            <h3 class="text-xl font-bold text-sky-400 mb-4">🎬 3D Animation Video</h3>
+            <div class="mb-4">
+                <span class="text-xs text-slate-400 uppercase tracking-wider">Optimized AI Prompt</span>
+                <p id="outOptimizedPrompt" class="text-xs bg-slate-950 p-3 rounded-lg border border-slate-800 mt-1 text-slate-300"></p>
+            </div>
+            <div class="mb-4">
+                <span class="text-xs text-slate-400 uppercase tracking-wider">Video Preview</span>
+                <video controls class="w-full rounded-lg mt-2 border border-slate-800" src="https://www.w3schools.com/html/mov_bbb.mp4"></video>
+            </div>
+        </div>
+
+        <!-- Custom AI Image Asset Card -->
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex flex-col">
+            <h3 class="text-xl font-bold text-sky-400 mb-4">🖼️ Custom AI Generated Image</h3>
+            <p class="text-xs text-slate-400 mb-2">Website ke liye auto-created visual asset:</p>
+            <div class="flex-grow flex items-center justify-center bg-slate-950 p-2 rounded-lg border border-slate-800 mb-4">
+                <img id="outAiImage" src="" alt="AI Asset" class="rounded-lg max-h-48 object-cover w-full">
+            </div>
+            <a id="downloadImgBtn" href="" target="_blank" class="bg-indigo-600 hover:bg-indigo-500 text-white text-center font-semibold py-2 px-4 rounded-xl transition text-sm">
+                🔍 View Full Image
+            </a>
+        </div>
+
+        <!-- Website Code Card (Full Width) -->
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl md:col-span-2 flex flex-col">
+            <h3 class="text-xl font-bold text-sky-400 mb-4">🌐 Professional Website Code</h3>
+            <pre class="bg-slate-950 p-4 rounded-lg border border-slate-800 text-xs text-emerald-400 overflow-x-auto max-h-48 mb-4"><code id="outCode"></code></pre>
+            <div class="flex gap-4">
+                <button onclick="downloadCode()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-4 rounded-xl transition text-center">
+                    📥 Download Website HTML
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let latestCode = "";
+
+        async function generateAll() {
+            const promptText = document.getElementById("userPrompt").value;
+            if(!promptText.trim()) {
+                alert("Pehle apna prompt toh likhein!");
+                return;
+            }
+
+            document.getElementById("loader").classList.remove("hidden");
+            document.getElementById("resultSection").classList.add("hidden");
+
+            try {
+                const response = await fetch("http://127.0.0.1:8000/generate", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_prompt: promptText })
+                });
+
+                const data = await response.json();
+                
+                if(data.status === "success") {
+                    document.getElementById("outOptimizedPrompt").innerText = data.optimized_prompt;
+                    document.getElementById("outOptimizedPrompt").innerText = data.optimized_prompt;
+                    document.getElementById("outAiImage").src = data.ai_image;
+                    document.getElementById("downloadImgBtn").href = data.ai_image;
+                    document.getElementById("outCode").innerText = data.website_code;
+                    latestCode = data.website_code;
+                    
+                    document.getElementById("loader").classList.add("hidden");
+                    document.getElementById("resultSection").classList.remove("hidden");
+                }
+            } catch(err) {
+                alert("Backend server se connection nahi ho saka! Check karein ke server chal raha hai.");
+                document.getElementById("loader").classList.add("hidden");
+            }
+        }
+
+        function downloadCode() {
+            const blob = new Blob([latestCode], { type: 'text/html' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'index.html';
+            a.click();
+        }
+    </script>
+</body>
+</html>
