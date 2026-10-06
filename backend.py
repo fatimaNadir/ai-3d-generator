@@ -28,22 +28,22 @@ def generate_content(request: GenerateRequest, db: Session = Depends(get_db)):
     start_time = time.time()
     prompt_lower = request.user_prompt.lower()
     
-    # 1. Category Detection & Smart Asset Matching
-    if "doctor"in prompt_lower or "clinic" in prompt_lower or "hospital" in prompt_lower:
+    # 1. Category Detection & Smart Asset Matching with Real Videos & Images
+    if "doctor" in prompt_lower or "clinic" in prompt_lower or "hospital" in prompt_lower:
         category = "Healthcare & Medical"
-        video_url = "https://www.w3schools.com/html/mov_bbb.mp4" # Professional medical/animation feed
+        video_url = "https://assets.mixkit.co/videos/preview/mixkit-doctor-checking-a-patient-in-a-clinic-42995-large.mp4"
         bg_image = "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80"
     elif "hotel" in prompt_lower or "cafe" in prompt_lower or "restaurant" in prompt_lower:
         category = "Hospitality & Food"
-        video_url = "https://www.w3schools.com/html/mov_bbb.mp4"
+        video_url = "https://assets.mixkit.co/videos/preview/mixkit-luxury-pool-in-a-hotel-resort-41520-large.mp4"
         bg_image = "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80"
     elif "shoe" in prompt_lower or "sneaker" in prompt_lower or "store" in prompt_lower or "shop" in prompt_lower:
         category = "E-Commerce & Retail"
-        video_url = "https://www.w3schools.com/html/mov_bbb.mp4"
+        video_url = "https://assets.mixkit.co/videos/preview/mixkit-stylish-woman-walking-with-shopping-bags-40898-large.mp4"
         bg_image = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80"
     else:
         category = "Custom Business Solution"
-        video_url = "https://www.w3schools.com/html/mov_bbb.mp4"
+        video_url = "https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-and-lights-31910-large.mp4"
         bg_image = "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80"
 
     optimized_prompt = f"Professional 3D cinematic animation, high-end web scroll sequence for [{category}]: {request.user_prompt}"
